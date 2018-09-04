@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Title</title>
+		<link rel="stylesheet" href="js/layui/css/layui.css" />
+		<script type="text/javascript" src="js/layui/layui.js"></script>
+		<style>
+			.layui-body{overflow:hidden;border-left:2px solid #1AA094;}
+			.layui-tab-content{ height:100%; padding:0; }
+			.layui-tab-item{ position: absolute; top: 41px; bottom:0; left: 0; right: 0; padding: 0; margin: 0; -webkit-overflow-scrolling:touch; overflow:auto;}
+			.layui-tab-title .layui-this{ background-color:#1AA094; color:#fff; }
+			.layui-tab-title .layui-this:after{ border:none; }
+			.layui-tab-title li cite{ font-style: normal; padding-left:5px; }
+			.clildFrame.layui-tab-content{ padding-right: 0; }
+			.clildFrame.layui-tab-content iframe{ width: 100%; height:100%; border:none; min-width: 320px; position:absolute; }
+		</style>
+	</head>
+
+	<body>
+		<div class="layui-layout-admin">
+			<!--头部导航栏-->
+			<div class="layui-header">
+				<!--logo-->
+				<div class="layui-logo">
+					用户管理系统
+				</div>
+				<!--导航栏左-->
+				<ul class="layui-layout-left layui-nav">
+					<li class="layui-nav-item">
+						<a href="javascript:;">控制台</a>
+					</li>
+				</ul>
+				<!--导航栏右-->
+				<ul class="layui-layout-right layui-nav">
+					<li class="layui-nav-item">
+						<a href="javascript:;" id="user_name">admin</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="javascript:;" id="alert_pwd">修改密码</a>
+							</dd>
+							<dd>
+								<a href="javascript:;" id="remove_login">注销</a>
+							</dd>
+						</dl>
+					</li>
+				</ul>
+			</div>
+			<!--侧边菜单栏-->
+			<div class="layui-side layui-bg-cyan">
+				<div class="layui-side-scroll">
+					<ul class="layui-nav layui-nav-tree" lay-filter="menu">
+						<li class="layui-nav-item">
+							<a href="javascript:;">用户管理</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a href="javascript:;">用户列表</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">添加用户</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a href="javascript:;">地址管理</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a href="javascript:;">地址列表</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">添加地址</a>
+								</dd>
+							</dl>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="layui-body">
+
+				<!-- 内容主体区域 -->
+				<div class="layui-tab marg0" lay-filter="bodyTab" id="top_tabs_box" lay-allowClose="true">
+					<ul class="layui-tab-title top_tab" id="top_tabs">
+						<li class="layui-this"  lay-id=""><i class="iconfont icon-computer"></i> <cite>后台首页</cite></li>
+					</ul>
+
+					<div class="layui-tab-content clildFrame">
+						<div class="layui-tab-item layui-show">
+							<iframe src="/userList"></iframe>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--底部固定区域-->
+			<div class="layui-footer">
+				<h3 align="center">
+					底部固定区域
+				</h3>
+			</div>
+		</div>
+	</body>
+	<script>
+		var str='后台首页,';
+		layui.use(['layer', 'element', 'form', 'laydate','table','jquery'], function(layer, element, form, laydate,table,$) {
+		    //验证是否登陆
+		    $.get("/user/checkLogin",function(data){
+			    if(data==""){
+			        layer.msg("请登录...",{icon:2});
+			        setTimeout("window.location.href='/login'",1000);
+				}else{
+			        $("#user_name").text("管理员: "+data.u_name);
+				}
+			});
+		    //修改密码
+			$("#alter_pwd").on('click',function(){
+
+			});
+			//注销用户
+			$("#remove_login").on('click',function(){
+			    $.get("/user/removeLogin",function (){
+			       layer.msg("已退出当前用户,重新登陆...",{icon:1});
+			       setTimeout("window.location.href='/login'",1000);
+				});
+			})
+
+			//监听导航点击
+            element.on('nav(menu)', function(elem){
+                var menuText=elem.text();
+                //添加选项卡
+                if(elem.siblings().length==0){
+
+                    if(str.indexOf(menuText)<0){
+                        element.tabAdd('bodyTab',{
+                            title:menuText,
+                            content:'<iframe src="/userList"></iframe>',
+                            id:menuText
+                        })
+						str+=menuText+",";
+
+					}
+                    element.tabChange('bodyTab',menuText);
+
+				}
+            });
+
+			//监听删除选项卡
+			element.on('tabDelete(bodyTab)',function(elem){
+                var tmp=str.split(',')[elem.index]+',';
+                str=str.replace(tmp,'');
+                if(tmp=='后台首页,'){
+                    layer.msg('该选项卡不可删除',{icon:0});
+                    element.tabAdd('bodyTab',{
+                        title:'后台首页',
+                        content:'<iframe src="/userList"></iframe>',
+                        id:'后台首页'
+                    });
+                    str+='后台首页,';
+                    element.tabChange('bodyTab','后台首页');
+                    return false;
+                }
+
+
+			});
+
+
+
+
+		});
+	</script>
+
+</html>

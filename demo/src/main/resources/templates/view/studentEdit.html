@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--导入layui样式-->
+    <link rel="stylesheet" href="../js/layui/css/layui.css">
+    <!--导入本页面样式-->
+    <link rel="stylesheet" href="../css/studentEdit.css">
+
+    <!--导入layui js-->
+    <script type="text/javascript" src="../js/layui/layui.js"></script>
+    <!--导入数据API-->
+    <script type="text/javascript" src="../js/url_util.js"></script>
+    <!--导入jquery-->
+    <script type="text/javascript" src="../js/jquery2.1.4.js"></script>
+    <!--导入本页面js-->
+    <script type="text/javascript" src="../js/view/studentEdit.js"></script>
+</head>
+<body>
+    <div style="margin-left: 400px;width:800px">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend th:if="${s_id==null}">学生信息添加</legend>
+            <legend th:unless="${s_id==null}">学生信息添加</legend>
+        </fieldset>
+        <form class="layui-form" action="#">
+            <div class="layui-form-item">
+                <input type="hidden" th:value="${s_id}" name="s_id"/>
+                <label class="layui-form-label">:姓名：</label>
+                <div class="layui-input-block">
+                    <input type="text" id="s_name" name="s_name" required  lay-verify="required" placeholder="姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别：</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="s_sex" value="F" title="男">
+                    <input type="radio" name="s_sex" value="M" title="女" checked>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">出生年月:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="s_birth_time" id="s_birth_time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">入学日期</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="s_in_time" id="s_in_time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">兴趣爱好:</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="sLike[]" title="吃鸡" value="吃鸡">
+                    <input type="checkbox" name="sLike[]" title="LOL" value="LOL">
+                    <input type="checkbox" name="sLike[]" title="CF" value="CF">
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">自我评价:</label>
+                <div class="layui-input-block">
+                    <textarea name="s_info" id="s_info" placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="stuInfo">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</body>
+</html>

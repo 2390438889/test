@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+    <link rel="stylesheet" href="../js/layui/css/layui.css" />
+    <script type="text/javascript" src="../js/layui/layui.js"></script>
+</head>
+<body>
+    <table id="user_list" lay-filter="user_list"></table>
+    <script type="text/html" id="toolbar">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+</body>
+<script>
+    layui.use(['table','layer','jquery','element'],function(table,layer,$,element){
+        table.render({
+            elem:'#user_list',
+            url:'/user/list',
+            page:'true',
+            limit:5,
+            limits:[1,2,5,10,20],
+            cols:[
+                [
+                    {
+                        type:'checkbox',
+                        align:'center'
+
+                    },{
+                        field:'u_id',
+                        title:'序号',
+                        align:'center',
+                        templet:function(value){
+                            return value.LAY_INDEX;
+                        }
+                    },{
+                    field:'u_name',
+                    title:'用户名',
+                    align:'center',
+                },{
+                    field:'u_pwd',
+                    title:'密码',
+                    align:'center',
+                    templet:function(value){
+                        return "******";
+                    },
+                },{
+                    title:"操作",
+                    toolbar:"#toolbar",
+                    align:'center',
+
+                }
+                ]
+            ]
+        });
+        table.on('checkbox(user_list)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+           var data=JSON.stringify(table.checkStatus('user_list').data);
+           console.log(data);
+           $.post('/user/getList',{'users':data},function(){});
+        });
+        table.on('tool(user_list)',function(event){
+            if(event.event=="del"){
+                layer.confirm('确认删除'+event.data.u_name+"用户?",{
+                    btn:['确认','取消']
+                },function(){
+                    $.post("/user/delete",{'id':event.data.u_id},function(){
+                        layer.msg("删除成功",{icon:1});
+                        //表格重载
+                        table.reload('user_list',{
+                            page:{
+                                curr:1
+                            },where:{
+
+                            }
+                        })
+                        //window.location.reload();
+                    });
+                },function () {
+
+                })
+            }else if(event.event="edit"){
+                layer.open({
+                    type: 2,
+                    title: '修改用户信息',
+                    shadeClose: true,
+                    shade: false,
+                    maxmin: true, //开启最大化最小化按钮
+                    area: ['893px', '600px'],
+                    content: '/update?id='+event.data.u_id
+                });
+            }
+        });
+    });
+</script>
+</html>
